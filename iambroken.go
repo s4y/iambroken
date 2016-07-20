@@ -77,13 +77,7 @@ var tools = func() map[string]func(http.ResponseWriter, *http.Request) {
 		}
 
 		// Hack away NFSN headers
-		r.Header.Del("Surrogate-Capability")
-		r.Header.Del("X-Forwarded-For")
-		r.Header.Del("X-Forwarded-Host")
 		r.Header.Del("X-Forwarded-Proto")
-		r.Header.Del("X-Forwarded-Server")
-		r.Header.Del("X-Nfsn-Https")
-		r.Header.Del("Via")
 
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		r.Write(w)

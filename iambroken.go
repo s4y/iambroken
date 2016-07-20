@@ -112,6 +112,8 @@ var istheinternetdown_tmpl = template.Must(template.New("istheinternetdown").Par
 <p>(You called from <code>{{.IP}}</code> on {{.Date}}.)</p>
 `))
 
+var fileServer = http.FileServer(http.Dir("."))
+
 type handler func(http.ResponseWriter, *http.Request)
 
 func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -127,10 +129,10 @@ func main() {
 		host := stripPort(r.Host)
 		switch host {
 		case "www.iambroken.com":
-			http.Redirect(w, r, "//iambroken.com/", http.StatusFound)
+			http.Redirect(w, r, "//iambroken.com"+r.URL.RequestURI(), http.StatusFound)
 			return
 		case "www.istheinternetdown.com":
-			http.Redirect(w, r, "//istheinternetdown.com/", http.StatusFound)
+			http.Redirect(w, r, "//istheinternetdown.com"+r.URL.RequestURI(), http.StatusFound)
 			return
 		case "istheinternetdown.com":
 			if r.URL.Path != "/" {
@@ -173,6 +175,6 @@ func main() {
 			tool(w, r)
 			return
 		}
-		http.NotFound(w, r)
+		fileServer.ServeHTTP(w, r)
 	})))
 }

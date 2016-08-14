@@ -190,6 +190,13 @@ func main() {
 			tool(w, r)
 			return
 		}
+
+		switch r.URL.Path {
+		case "/robots.txt", "/favicon.ico":
+			http.ServeContent(w, r, "", time.Unix(1471188400, 0), strings.NewReader(""))
+			return
+		}
+
 		if hasTrailingSlash(r.URL.Path) {
 			http.NotFound(w, r)
 			return

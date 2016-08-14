@@ -130,6 +130,17 @@ func main() {
 		log.Fatal(err)
 	}
 	log.Fatal(fcgi.Serve(ln, handler(func(w http.ResponseWriter, r *http.Request) {
+		accepts_html := strings.Index(r.Header.Get("Accept"), "html") != -1
+
+		if accepts_html && r.URL.Scheme == "http" {
+			target := *r.URL
+			target.Scheme = "https"
+			http.Redirect(w, r, target.String(), http.StatusMovedPermanently)
+			return
+		}
+
+		w.Header().Set("Strict-Transport-Security", "max-age=15552000; includeSubDomains; preload")
+
 		host := stripPort(r.Host)
 		switch host {
 		case "www.iambroken.com":
@@ -142,7 +153,7 @@ func main() {
 			if r.URL.Path != "/" {
 				break
 			}
-			if strings.Index(r.Header.Get("Accept"), "html") == -1 {
+			if !accepts_html {
 				istheinternetdown_basic(w, r)
 			} else {
 				color := make([]byte, 3)

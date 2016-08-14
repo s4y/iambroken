@@ -13,6 +13,10 @@ import (
 	"time"
 )
 
+func hasTrailingSlash(s string) bool {
+	return len(s) > 0 && s[len(s)-1] == '/'
+}
+
 func stripPort(host string) string {
 	if colon := strings.IndexByte(host, ':'); colon != -1 {
 		return host[:colon]
@@ -173,6 +177,10 @@ func main() {
 				break
 			}
 			tool(w, r)
+			return
+		}
+		if hasTrailingSlash(r.URL.Path) {
+			http.NotFound(w, r)
 			return
 		}
 		fileServer.ServeHTTP(w, r)

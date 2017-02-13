@@ -18,7 +18,7 @@ func hasTrailingSlash(s string) bool {
 }
 
 func stripPort(host string) string {
-	if colon := strings.IndexByte(host, ':'); colon != -1 {
+	if colon := strings.LastIndexByte(host, ':'); colon != -1 {
 		return host[:colon]
 	}
 	return host
